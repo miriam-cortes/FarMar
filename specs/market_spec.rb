@@ -15,12 +15,11 @@ describe FarMar::Market do
       expect ( thing.length ).must_equal(500)
     end
 
-
     it 'Tests .find for Market 500' do
       market_number = FarMar::Market.find(500)
       expect ( market_number.name ).must_equal("Montefiore Medical Center Farmers Market_Thursday")
     end
-    # let ( market_number = FarMar::Market.find(25) )
+
     it 'Tests .find for Market 25' do
       market_number = FarMar::Market.find(25)
       expect ( market_number.address ).must_equal("1 Courthouse Square")
