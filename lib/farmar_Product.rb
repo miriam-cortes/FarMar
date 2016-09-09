@@ -14,9 +14,6 @@ class FarMar::Product
       product = line[1]
       vendor_id = line[2].to_i
       product_hash[id] = self.new(id,product,vendor_id)
-      if product[0] == "22"
-        puts product
-      end
     end
     return product_hash #collection of instances, representing all objects described in CSV
   end

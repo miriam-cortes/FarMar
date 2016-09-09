@@ -36,9 +36,6 @@ class FarMar::Market
   def vendors
     vendors_array = []
     ( FarMar::Vendor.all ).each do |k,vendor_object|
-      if vendor_object.market_id > self.id
-        break
-      end
       if vendor_object.market_id == self.id
         vendors_array << vendor_object
       end

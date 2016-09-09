@@ -21,7 +21,7 @@ describe FarMar::Product do
   end
 
   it 'test the vendor instance method' do
-    expect (product_3.vendor_id).must_equal(FarMar::Vendor.find(2).id)
+    expect (product_3.vendor.id).must_equal(FarMar::Vendor.find(2).id)
   end
 
   it 'test the sales instance method' do
