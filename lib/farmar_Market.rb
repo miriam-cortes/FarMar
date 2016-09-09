@@ -1,8 +1,10 @@
-require_relative '../far_mar'
+# require_relative '../far_mar'
+# require_relative 'farmar_Vendor'
 
 class FarMar::Market
-  attr_accessor :name, :id, :address, :city, :county, :state, :zip, :market_hash
-  def initialize(name,address,city,county,state,zip)
+  attr_reader :name, :id, :address, :city, :county, :state, :zip, :market_hash
+  def initialize(id,name,address,city,county,state,zip)
+    @id = id
     @name = name
     @address = address
     @city = city
@@ -21,7 +23,7 @@ class FarMar::Market
       county = account[4]
       state = account[5]
       zip = account[6].to_i
-      market_hash[id] = self.new(name,address,city,county,state,zip)
+      market_hash[id] = self.new(id,name,address,city,county,state,zip)
     end
     return market_hash #a collection of instances, representing all of the objects described in the CSV
   end
@@ -31,19 +33,17 @@ class FarMar::Market
     return market[id]
   end
 
-  def vendors #PUT THIS ON PAUSE AND WORK ON SELF.BY_MARKET FIRST!! (ACCORDING TO SSSSUSSSSSAN!)
-    # vendors_array = []
-    # market = self.all
-    # # vendor = FarMar::Vendor.all
-    # i = 1
-    # market.each do |market_k,market_v|
-    #   current_vendor = FarMar::Vendor.find(i)
-    #   if market_k == current_vendor.market_id
-    #     vendors_array[ (i - 1) ] << current_vendor
-    #   end
-    #   i += 1
-    # end
-    #
-    # return  vendors_array #a collection of FarMar::Vendor instances that are associated with the market by the market_id field.
+  def vendors
+    vendors_array = []
+    ( FarMar::Vendor.all ).each do |k,vendor_object|
+      if vendor_object.market_id > self.id
+        break
+      end
+      if vendor_object.market_id == self.id
+        vendors_array << vendor_object
+      end
+    end
+
+    return  vendors_array #a collection of FarMar::Vendor instances that are associated with the market by the market_id field.
   end
 end

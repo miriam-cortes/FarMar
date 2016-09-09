@@ -1,8 +1,9 @@
 #FarMar::Vendor
-require_relative '../far_mar'
+# require_relative '../far_mar'
 class FarMar::Vendor
-  attr_accessor :name, :number_employees, :market_id
-  def initialize(name,number_employees,market_id)
+  attr_reader :id, :name, :number_employees, :market_id
+  def initialize(id,name,number_employees,market_id)
+    @id = id
     @name = name
     @number_employees = number_employees
     @market_id = market_id
@@ -15,34 +16,58 @@ class FarMar::Vendor
       name = account[1]
       number_employees = account[2].to_i
       market_id = account[3].to_i
-      vendor_hash[id] = self.new(name,number_employees,market_id)
+      vendor_hash[id] = self.new(id,name,number_employees,market_id)
     end
     return vendor_hash #a collection of instances, representing all of the objects described in the CSV
   end
 
   def self.find(id)
     vendors = self.all
-    return vendors[id] #an instance of the object where the value of the id field in the CSV matches the passed parameter.
+    return vendors[id] #instance of object where value of id field in CSV matches passed parameter.
   end
 
   def market
-    # vendors = self.all
-    # vendors.each do |account|
-    #   FarMar::Market.find(account[3].to_i)
-    # end
-    #
-    return  #the FarMar::Market instance that is associated with this vendor using the FarMar::Vendor market_id field
+    return FarMar::Market.find(self.market_id)
+    #FarMar::Market instance associated with vendor using FarMar::Vendor market_id field
   end
+
   def products
-    return #a collection of FarMar::Product instances that are associated by the FarMar::Product vendor_id field.
+    products = []
+    ( FarMar::Product.all ).each do |k,product_object|
+      if product_object.vendor_id > self.id #just break out of loop if you've gone beyond the wanted product
+        break
+      end
+      if product_object.vendor_id == self.id
+        products << product_object
+      end
+    end
+    return products #a collection of FarMar::Product instances that are associated by the FarMar::Product vendor_id field.
   end
 
   def sales
-    return #a collection of FarMar::Sale instances that are associated by the vendor_id field.
+    sales = []
+    i = 1
+    ( FarMar::Sale.all ).each do |k,sale_object|
+      if sale_object.vendor_id > self.id #just break out of loop if you've gone beyond the wanted product
+        break
+      end
+      if sale_object.vendor_id == self.id
+        sales << sale_object
+      end
+      i += 1
+    end
+    return sales #a collection of FarMar::Sale instances that are associated by the vendor_id field.
   end
 
   def revenue
-    return #the the sum of all of the vendor's sales (in cents)
+    sum = 0
+    ( FarMar::Sale.all ).each do |k,sale_object|
+      if sale_object.vendor_id == self.id
+        sum += sale_object.sale_amount
+      end
+    end
+
+    return sum/100.0 #the the sum of all of the vendor's sales (in cents)
   end
 
   def self.by_market(market_id)
@@ -56,9 +81,3 @@ class FarMar::Vendor
   end
 
 end
-
-# vendors = FarMar::Vendor.all
-# puts FarMar::Vendor.find(15).market_id
-# puts vendor15.market_id
-# vendors.market_id
-# ap FarMar::Vendor.by_market(7) #
